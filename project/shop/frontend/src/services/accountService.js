@@ -19,3 +19,14 @@ export const check = () => {
 export const logout = () => {
     return httpRequester.post("/v1/api/account/logout").catch(e => e.response);
 };
+
+// 회원 정보 수정
+export const updateMemberInfo = (loginId, newAddress, newPhoneNumber, newPassword) => {
+    const data = {
+        loginId,
+        newAddress,
+        newPhoneNumber,
+        newPassword: newPassword || undefined,  // 비밀번호가 없으면 undefined로 처리
+    };
+    return httpRequester.put("/v1/api/account/update", data).catch(e => e.response);
+};

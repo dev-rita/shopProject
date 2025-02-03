@@ -38,6 +38,11 @@ const router = createRouter({
       name: 'orderDetail',
       component: () => import('../views/OrderDetail.vue')
     },
+    {
+      path: '/mypage',  // 내정보 페이지를 위한 경로 추가
+      name: 'mypage',
+      component: () => import('../views/Mypage.vue')  // 해당 경로에 대한 컴포넌트
+    }
   ]
 });
 

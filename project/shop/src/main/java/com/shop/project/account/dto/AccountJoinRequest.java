@@ -10,4 +10,6 @@ public class AccountJoinRequest {
     private String name;
     private String loginId;
     private String loginPw;
+    private String address;
+    private String phoneNumber;
 }
