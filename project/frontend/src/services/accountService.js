@@ -11,8 +11,8 @@ export const login = (args) => {
 };
 
 // 로그인 여부 확인
-export const check = (id) => {
-    return httpRequester.post("/v1/api/account/check", id).catch(e => e.response);
+export const check = () => {
+    return httpRequester.get("/v1/api/account/check").catch(e => e.response);
 };
 
 // 로그아웃
