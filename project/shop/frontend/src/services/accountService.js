@@ -20,13 +20,19 @@ export const logout = () => {
     return httpRequester.post("/v1/api/account/logout").catch(e => e.response);
 };
 
+// 회원 내 정보 조회
+export const info = (loginId) => {
+    return httpRequester.get("/v1/api/account/info?loginId="+loginId).catch(e => e.response);
+};
+
+
 // 회원 정보 수정
-export const updateMemberInfo = (loginId, newAddress, newPhoneNumber, newPassword) => {
+export const updateMemberInfo = (loginId, newAddress, newPhoneNumber, newloginPw) => {
     const data = {
         loginId,
         newAddress,
         newPhoneNumber,
-        newPassword: newPassword || undefined,  // 비밀번호가 없으면 undefined로 처리
+        newloginPw: newloginPw || undefined,  // newPassword 대신 newloginPw로 수정
     };
     return httpRequester.put("/v1/api/account/update", data).catch(e => e.response);
 };
