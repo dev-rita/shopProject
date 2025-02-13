@@ -34,7 +34,8 @@ const submit = async () => {
 
   switch (res.status) {
     case 200:
-      accountStore.setAccessToken(res.data);
+      accountStore.setId(res.data.id);
+      accountStore.setAccessToken(res.data.token);
       await router.push("/");
       break;
 

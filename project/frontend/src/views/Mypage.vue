@@ -2,9 +2,9 @@
 import { reactive, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAccountStore } from "@/stores/account";
-import { updateMemberInfo, selectmember } from "@/services/accountService"; // selectmember 추가
+import { updateMemberInfo, info } from "@/services/accountService"; // selectmember 추가
 import axios from 'axios';
-import { check } from "@/services/accountService";
+import { info } from "@/services/accountService";
 
 // 상태 관리
 const accountStore = useAccountStore();
@@ -31,13 +31,15 @@ onMounted(() => {
 
 // 로그인 여부 확인 후 회원 정보 조회
 const fetchMemberInfo = () => {
-  check()  // 로그인 여부 확인
+  let id = accountStore.id;
+  let form = { loginPw : id };
+  info(form)  // 로그인 여부 확인
     .then(response => {
       if (response && response.data) {
         const loginId = response.data.loginId;  // 로그인된 사용자의 loginId 가져오기
         
         // 로그인된 사용자라면 회원 정보 조회
-        selectmember(loginId)
+        info(loginId)
           .then(memberInfo => {
             if (memberInfo && memberInfo.data) {
               // 받아온 데이터를 member에 반영

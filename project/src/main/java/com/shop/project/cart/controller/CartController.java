@@ -8,6 +8,8 @@ import com.shop.project.item.dto.ItemRead;
 import com.shop.project.item.service.ItemService;
 import com.shop.project.account.helper.AccountHelper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1")
 @RequiredArgsConstructor
+@Log4j2
 public class CartController {
 
     private final CartService cartService;
@@ -25,6 +28,7 @@ public class CartController {
 
     @GetMapping("/api/cart/items")
     public ResponseEntity<?> readAll(HttpServletRequest req) {
+        
         // 로그인 회원 아이디
         Integer memberId = accountHelper.getMemberId(req);
 
