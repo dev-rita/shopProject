@@ -5,8 +5,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.shop.project.account.dto.AccountJoinRequest;
 import com.shop.project.account.dto.AccountLoginRequest;
 import com.shop.project.account.helper.AccountHelper;
+import com.shop.project.member.entity.Member;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import com.shop.project.block.service.BlockService;
 import com.shop.project.common.util.HttpUtils;
 import com.shop.project.account.etc.AccountConstants;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.shop.project.member.service.MemberService;
@@ -24,7 +26,7 @@ import com.shop.project.member.service.MemberService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1")
-@Slf4j
+@Log4j2
 public class AccountController {
 
     private final AccountHelper accountHelper;
@@ -42,7 +44,7 @@ public class AccountController {
         if (memberService.find(joinReq.getLoginId()) != null) { // ③
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-        log.debug("여기???????????????");
+
         accountHelper.join(joinReq);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -59,6 +61,10 @@ public class AccountController {
         if (output == null) { // 로그인 실패 시
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("token", output);
+        resultMap.put("id",loginReq.getLoginId()); // 이거 정답 아님. 뷰에서 넘어오는거 쓰면 당연히 안됨
 
         return new ResponseEntity<>(output, HttpStatus.OK);
     }
@@ -94,3 +100,5 @@ public class AccountController {
         return new ResponseEntity<>(accessToken, HttpStatus.OK);
     }
 }
+
+

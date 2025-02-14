@@ -20,8 +20,8 @@ public class SessionAccountHelper implements AccountHelper {
     // 회원가입
     @Override
     public void join(AccountJoinRequest joinReq) {
-        //임시수정memberService.save(joinReq.getName(), joinReq.getLoginId(), joinReq.getLoginPw());
-        memberService.save(joinReq.getName(), joinReq.getLoginId(), joinReq.getLoginPw(), joinReq.getAddress(), joinReq.getPhoneNumber());
+         //임시수정memberService.save(joinReq.getName(), joinReq.getLoginId(), joinReq.getLoginPw());
+         memberService.save(joinReq.getName(), joinReq.getLoginId(), joinReq.getLoginPw(), joinReq.getAddress(), joinReq.getPhoneNumber());
     }
 
     // 로그인
