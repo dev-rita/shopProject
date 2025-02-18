@@ -5,6 +5,7 @@ import {useAccountStore} from "@/stores/account";
 import {watch} from "vue";
 import {useRoute} from "vue-router";
 import {check} from "@/services/accountService";
+import { onMounted } from 'vue';
 
 // 계정 스토어
 const accountStore = useAccountStore();
@@ -32,6 +33,17 @@ const checkAccount = async () => {
 // 라우트 경로가 바뀔 때마다 로그인 여부를 확인
 watch(() => route.path, () => {
   checkAccount();
+});
+// 페이지가 로드될 때, 로컬 스토리지에서 토큰과 ID를 가져와서 스토어에 설정
+onMounted(() => {
+  const savedToken = localStorage.getItem('accessToken');
+  const savedUserId = localStorage.getItem('userId');
+  
+  if (savedToken && savedUserId) {
+    accountStore.setAccessToken(savedToken);
+    accountStore.setUserId(savedUserId);
+    accountStore.setLoggedIn(true);  // 로그인 상태로 설정
+  }
 });
 </script>
 

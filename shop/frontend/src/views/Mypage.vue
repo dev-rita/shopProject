@@ -11,7 +11,7 @@ const router = useRouter();
 
 // 상태 변수들
 const member = reactive({
-  name: '',
+  LoginPw: '',
   loginId: '',
   address: '',
   phoneNumber: ''
@@ -23,7 +23,9 @@ const errorMessage = ref('');
 
 // 컴포넌트가 마운트될 때 회원 정보 로드
 onMounted(() => {
-  fetchMemberInfo();
+  if (accountStore.loggedIn) {  // 로그인 상태인 경우에만 정보 로드
+    fetchMemberInfo();
+  }
 });
 
 const fetchMemberInfo = () => {
@@ -39,6 +41,7 @@ const fetchMemberInfo = () => {
       member.loginId = response.data.member.loginId;
       member.address = response.data.member.address;
       member.phoneNumber = response.data.member.phoneNumber;
+      member.loginPw = response.data.member.loginPw;
     })
     .catch(error => {
       console.error('회원 정보 조회 실패:', error);
@@ -91,7 +94,7 @@ const handleUpdateMemberInfo = () => {  // 함수 이름을 변경 (updateMember
       // 성공 후 상태 업데이트
       accountStore.updateUserInfo(response.data);  // 스토어에 업데이트된 사용자 정보 반영
       alert('Information updated successfully');
-      router.push('/profile');  // 프로필 페이지로 이동 (원하는 라우트로 변경)
+      router.push('/mypage');  // 프로필 페이지로 이동 (원하는 라우트로 변경)
     })
     .catch(error => {
       console.error('Error updating member info:', error);
@@ -132,7 +135,7 @@ const handleUpdateMemberInfo = () => {  // 함수 이름을 변경 (updateMember
       <!-- 기존 비밀번호 입력 -->
       <div>
         <label for="loginPw">현재 비밀번호</label>
-        <input type="password" id="loginPw" v-model="loginPw" required />
+        <input type="password" id="loginPw" v-model="member.loginPw" required />
       </div>
 
       <!-- 새 비밀번호 입력 -->

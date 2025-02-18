@@ -1,8 +1,8 @@
 <script setup>
-import {reactive} from "vue";
-import {login} from "@/services/accountService";
-import {useRouter} from "vue-router";
-import {useAccountStore} from "@/stores/account";
+import { reactive, onMounted } from "vue";
+import { login } from "@/services/accountService";
+import { useRouter } from "vue-router";
+import { useAccountStore } from "@/stores/account";
 
 // 반응형 상태
 const state = reactive({
@@ -35,16 +35,36 @@ const submit = async () => {
   switch (res.status) {
     case 200:
       console.log(res.data.id);
+      
+      // 로그인 성공 후 Pinia 스토어에 정보 저장
       accountStore.setAccessToken(res.data.token);
       accountStore.setUserId(res.data.id);
+
+      // 로컬 스토리지에 정보 저장
+      localStorage.setItem('accessToken', res.data.token);
+      localStorage.setItem('userId', res.data.id);
+
+      // 홈 페이지로 이동
       await router.push("/");
       break;
 
     case 404:
-      window.alert("입력하신 정보와 일치하는 회원이 없습니다.")
+      window.alert("입력하신 정보와 일치하는 회원이 없습니다.");
       break;
   }
 };
+
+// 페이지 로드 시 로컬 스토리지에서 정보 복원
+onMounted(() => {
+  const savedToken = localStorage.getItem('accessToken');
+  const savedUserId = localStorage.getItem('userId');
+
+  if (savedToken && savedUserId) {
+    accountStore.setAccessToken(savedToken);
+    accountStore.setUserId(savedUserId);
+    accountStore.setLoggedIn(true);  // 로그인 상태로 설정
+  }
+});
 </script>
 
 <template>
