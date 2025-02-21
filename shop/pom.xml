@@ -88,6 +88,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				  <encoding>UTF-8</encoding>  <!-- 인코딩을 UTF-8로 설정 -->
 				<configuration>
 					<annotationProcessorPaths>
 						<path>

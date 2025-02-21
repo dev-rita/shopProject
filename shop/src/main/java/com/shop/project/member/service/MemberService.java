@@ -14,5 +14,5 @@ public interface MemberService {
     Member find(String loginId);
 
     // 회원 정보 수정 (주소, 전화번호, 비밀번호 변경)
-    Member updateMemberInfo(String loginId, String newloginPw, String newAddress, String newPhoneNumber);
+    Member updateMemberInfo(String loginId, String loginPw,String newloginPw, String newAddress, String newPhoneNumber);
 }

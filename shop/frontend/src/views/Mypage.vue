@@ -11,7 +11,6 @@ const router = useRouter();
 
 // 상태 변수들
 const member = reactive({
-  LoginPw: '',
   loginId: '',
   address: '',
   phoneNumber: ''
@@ -41,30 +40,19 @@ const fetchMemberInfo = () => {
       member.loginId = response.data.member.loginId;
       member.address = response.data.member.address;
       member.phoneNumber = response.data.member.phoneNumber;
-      member.loginPw = response.data.member.loginPw;
     })
     .catch(error => {
       console.error('회원 정보 조회 실패:', error);
     });
 }
 
-// 로그인 후 setId 호출 예시
-const loginSuccess = () => {
-  const userIdFromLogin = 'user123'; // 예시로 로그인 후 받은 ID
-  accountStore.setId(userIdFromLogin);  // 로그인 성공 후 setId를 호출하여 userId 설정
-};
-
 // 회원 정보 수정 (이름을 updateMemberInfo로 그대로 사용)
-const handleUpdateMemberInfo = () => {  // 함수 이름을 변경 (updateMemberInfo를 그대로 사용)
-  if (!member) {
-    return;
-  }
-
+const handleUpdateMemberInfo = () => {  
   // 에러 메시지 초기화
   errorMessage.value = '';
 
   // 비밀번호 유효성 검사
-  if (newLoginPw.value !== confirmLoginPw.value) {
+  if (newLoginPw.value && newLoginPw.value !== confirmLoginPw.value) {
     errorMessage.value = 'New password and confirmation do not match.';
     return;
   }
@@ -77,30 +65,48 @@ const handleUpdateMemberInfo = () => {  // 함수 이름을 변경 (updateMember
 
   // 수정할 정보 준비
   const updatedInfo = {
-    loginId: member.loginId,
-    loginPw: loginPw.value,      // 기존 비밀번호를 추가
-    newAddress: member.address,
-    newPhoneNumber: member.phoneNumber,
+    loginId: member.loginId,        // 회원의 로그인 ID
+    loginPw: loginPw.value,         // 기존 비밀번호
+    newAddress: encodeURIComponent(member.address),    // 주소 (기존 주소를 그대로 사용)
+    newPhoneNumber: member.phoneNumber,// 전화번호 (기존 전화번호를 그대로 사용)
+    newLoginPw: newLoginPw.value  
   };
 
-  // 비밀번호 수정이 있을 경우에만 포함
+  // 새 비밀번호가 있을 경우에만 포함
   if (newLoginPw.value) {
-    updatedInfo.newPassword = newLoginPw.value;
+    updatedInfo.newLoginPw = newLoginPw.value;  // 새 비밀번호 추가
   }
 
-  // 서비스 호출하여 서버에 요청
-  updateMemberInfo(updatedInfo)  // import한 updateMemberInfo 사용
+  // 추가로 userId, accessToken, checked, loggedIn 등의 정보도 포함될 수 있습니다.
+  const extraInfo = {
+    userId: 'newUserId',       // 새로운 userId
+    accessToken: 'newAccessToken', // 새로운 accessToken
+    checked: true,             // 새로운 checked 상태
+    loggedIn: true             // 새로운 로그인 상태
+  };
+
+  // 새로운 정보와 기존 정보를 병합
+  const finalUpdatedInfo = { ...updatedInfo, ...extraInfo };
+
+  // 서버에 요청 (updateMemberInfo 서비스 호출)
+  updateMemberInfo(finalUpdatedInfo)  // 서버로 요청
     .then(response => {
-      // 성공 후 상태 업데이트
-      accountStore.updateUserInfo(response.data);  // 스토어에 업데이트된 사용자 정보 반영
-      alert('Information updated successfully');
-      router.push('/mypage');  // 프로필 페이지로 이동 (원하는 라우트로 변경)
+      if (response && response.data) {
+        // 성공 후 상태 업데이트 (response.data가 반환된 데이터로 가정)
+        accountStore.updateUserInfo(response.data);  // 스토어에 업데이트된 사용자 정보 반영
+        alert('Information updated successfully');
+        router.push('/mypage');  // 프로필 페이지로 이동 (원하는 라우트로 변경)
+      } else {
+        errorMessage.value = 'No response data received.';
+      }
     })
     .catch(error => {
       console.error('Error updating member info:', error);
       errorMessage.value = 'Failed to update member information.';
     });
 };
+
+
 </script>
 
 <template>
@@ -135,7 +141,7 @@ const handleUpdateMemberInfo = () => {  // 함수 이름을 변경 (updateMember
       <!-- 기존 비밀번호 입력 -->
       <div>
         <label for="loginPw">현재 비밀번호</label>
-        <input type="password" id="loginPw" v-model="member.loginPw" required />
+        <input type="password" id="loginPw" v-model="loginPw" required />
       </div>
 
       <!-- 새 비밀번호 입력 -->

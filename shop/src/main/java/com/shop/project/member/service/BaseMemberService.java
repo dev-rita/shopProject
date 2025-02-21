@@ -51,30 +51,37 @@ public class BaseMemberService implements MemberService {
  
      // 회원 정보 수정 (비밀번호, 주소, 전화번호 변경)
      @Override
-     public Member updateMemberInfo(String loginId, String newloginPw, String newAddress, String newPhoneNumber) {
-         // 1. 아이디로 회원 정보 조회
-         Member member = memberRepository.findByLoginId(loginId)
-                 .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
- 
-         // 2. 비밀번호가 변경되었으면 새 비밀번호로 업데이트
-         if (newloginPw != null && !newloginPw.isEmpty()) {
-             String loginPwSalt = HashUtils.generateSalt(16);
-             String loginPwSalted = HashUtils.generateHash(newloginPw, loginPwSalt);
-             member.setLoginPw(loginPwSalted);
-             member.setLoginPwSalt(loginPwSalt);
-         }
- 
-         // 4. 주소와 전화번호 업데이트
-         if (newAddress != null && !newAddress.isEmpty()) {
-             member.setAddress(newAddress);
-         }
- 
-         if (newPhoneNumber != null && !newPhoneNumber.isEmpty()) {
-             member.setPhoneNumber(newPhoneNumber);
-         }
- 
-         // 5. 수정된 회원 정보 저장
-         return memberRepository.save(member);
-     }
+    public Member updateMemberInfo(String loginId, String loginPw, String newLoginPw, String newAddress, String newPhoneNumber) {
+    // 1. 아이디로 회원 정보 조회
+    Member member = memberRepository.findByLoginId(loginId)
+            .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
+    
+    // 2. 기존 비밀번호 검증
+    String hashedCurrentPassword = HashUtils.generateHash(loginPw, member.getLoginPwSalt());
+    if (!hashedCurrentPassword.equals(member.getLoginPw())) {
+        throw new IllegalArgumentException("현재 비밀번호가 잘못되었습니다.");
+    }
+    
+    // 3. 비밀번호가 변경되었으면 새 비밀번호로 업데이트
+    if (newLoginPw != null && !newLoginPw.isEmpty()) {
+        String newLoginPwSalt = HashUtils.generateSalt(16);
+        String newLoginPwSalted = HashUtils.generateHash(newLoginPw, newLoginPwSalt);
+        member.setLoginPw(newLoginPwSalted);  // 새 비밀번호 저장
+        member.setLoginPwSalt(newLoginPwSalt);  // 새 Salt 저장
+    }
+
+    // 4. 주소와 전화번호 업데이트
+    if (newAddress != null && !newAddress.isEmpty()) {
+        member.setAddress(newAddress);
+    }
+
+    if (newPhoneNumber != null && !newPhoneNumber.isEmpty()) {
+        member.setPhoneNumber(newPhoneNumber);
+    }
+
+    // 5. 수정된 회원 정보 저장
+    return memberRepository.save(member);
+}
+
  }
  

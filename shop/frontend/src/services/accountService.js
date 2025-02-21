@@ -27,12 +27,6 @@ export const info = (loginId) => {
 
 
 // 회원 정보 수정
-export const updateMemberInfo = (loginId, newAddress, newPhoneNumber, newloginPw) => {
-    const data = {
-        loginId,
-        newAddress,
-        newPhoneNumber,
-        newloginPw: newloginPw || undefined,  // newPassword 대신 newloginPw로 수정
-    };
+export const updateMemberInfo = (data) => {
     return httpRequester.put("/v1/api/account/update", data).catch(e => e.response);
 };
